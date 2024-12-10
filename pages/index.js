@@ -62,14 +62,10 @@ export default function CurrencyConverter() {
 
   return (
     <div style={styles.container}>
-      <h1>Currency Exchange Converter</h1>
-      <p className="primaryCurrencyText">
-        1 {currencyPrimary} equals
-      </p>
+      <h1>Currency Converter</h1>
       <p className="exchangeRateText">
         {formatToCurrency(amountSecondary / amountPrimary)} {currencySecondary}
       </p>
-      <p className="date">{format(new Date(), "dd/MM/yyyy h:mm a")}</p>
       <div className="currencyInputs" style={styles.currencyInputs}>
         <CurrencyInputField
           value={amountPrimary}
