@@ -1,4 +1,3 @@
-// src/_utils/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth, GithubAuthProvider } from "firebase/auth";
 

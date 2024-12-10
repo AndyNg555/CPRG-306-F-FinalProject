@@ -1,87 +1,86 @@
 import { useState, useEffect } from "react"; 
 import { format } from "date-fns"; 
-import CurrencyInputField from "../components/CurrencyInputField"; 
+import CurrencyField from "../components/CurrencyField"; 
 import axios from "axios"; 
 
 const API_KEY = "fb2eb2a78836932ede001c02792fec38"; 
 const EXCHANGE_API = `http://data.fixer.io/api/latest?access_key=${API_KEY}`;
 
-export default function CurrencyConverter() { 
-  const [amountPrimary, setAmountPrimary] = useState(1); 
-  const [amountSecondary, setAmountSecondary] = useState(1); 
-  const [currencyPrimary, setCurrencyPrimary] = useState("CAD"); 
-  const [currencySecondary, setCurrencySecondary] = useState("USD"); 
-  const [exchangeRates, setExchangeRates] = useState(null); 
-  const [user, setUser] = useState(null);
+export default function CurrencyExchange() { 
+  const [primaryAmount, setPrimaryAmount] = useState(1); 
+  const [secondaryAmount, setSecondaryAmount] = useState(1); 
+  const [primaryCurrency, setPrimaryCurrency] = useState("CAD"); 
+  const [secondaryCurrency, setSecondaryCurrency] = useState("USD"); 
+  const [exchangeRateData, setExchangeRateData] = useState(null); 
 
   useEffect(() => { 
     axios 
       .get(EXCHANGE_API) 
-      .then((response) => setExchangeRates(response.data.rates)) 
+      .then((response) => setExchangeRateData(response.data.rates)) 
       .catch((error) => { 
         console.error(error); 
-        setExchangeRates(null); 
+        setExchangeRateData(null); 
       }); 
   }, []);
 
-  const formatToCurrency = (number) => number.toFixed(2);
+  const formatCurrency = (number) => number.toFixed(2);
 
   const handlePrimaryAmountChange = (newAmount) => { 
-    setAmountSecondary( 
-      formatToCurrency((newAmount * exchangeRates[currencySecondary]) / exchangeRates[currencyPrimary]) 
+    setSecondaryAmount( 
+      formatCurrency((newAmount * exchangeRateData[secondaryCurrency]) / exchangeRateData[primaryCurrency]) 
     ); 
-    setAmountPrimary(newAmount); 
+    setPrimaryAmount(newAmount); 
   };
 
   const handleSecondaryAmountChange = (newAmount) => { 
-    setAmountPrimary( 
-      formatToCurrency((newAmount * exchangeRates[currencyPrimary]) / exchangeRates[currencySecondary]) 
+    setPrimaryAmount( 
+      formatCurrency((newAmount * exchangeRateData[primaryCurrency]) / exchangeRateData[secondaryCurrency]) 
     ); 
-    setAmountSecondary(newAmount); 
+    setSecondaryAmount(newAmount); 
   };
 
   const handlePrimaryCurrencyChange = (newCurrency) => { 
-    setAmountSecondary( 
-      formatToCurrency((amountPrimary * exchangeRates[currencySecondary]) / exchangeRates[newCurrency]) 
+    setSecondaryAmount( 
+      formatCurrency((primaryAmount * exchangeRateData[secondaryCurrency]) / exchangeRateData[newCurrency]) 
     ); 
-    setCurrencyPrimary(newCurrency); 
+    setPrimaryCurrency(newCurrency); 
   };
 
   const handleSecondaryCurrencyChange = (newCurrency) => { 
-    setAmountPrimary( 
-      formatToCurrency((amountSecondary * exchangeRates[currencyPrimary]) / exchangeRates[newCurrency]) 
+    setPrimaryAmount( 
+      formatCurrency((secondaryAmount * exchangeRateData[primaryCurrency]) / exchangeRateData[newCurrency]) 
     ); 
-    setCurrencySecondary(newCurrency); 
+    setSecondaryCurrency(newCurrency); 
   };
 
   useEffect(() => { 
-    if (exchangeRates) { 
+    if (exchangeRateData) { 
       handlePrimaryAmountChange(1); 
     } 
-  }, [exchangeRates]);
+  }, [exchangeRateData]);
 
   return (
     <div style={styles.container}>
-      <h1>Currency Converter</h1>
+      <h1>Currency Exchange</h1>
       <p className="exchangeRateText">
-        {formatToCurrency(amountSecondary / amountPrimary)} {currencySecondary}
+        {formatCurrency(secondaryAmount / primaryAmount)} {secondaryCurrency}
       </p>
-      <div className="currencyInputs" style={styles.currencyInputs}>
-        <CurrencyInputField
-          value={amountPrimary}
-          currencyType={currencyPrimary}
-          availableCurrencies={Object.keys(exchangeRates)}
+      <div className="currencyFields" style={styles.currencyFields}>
+        <CurrencyField
+          value={primaryAmount}
+          currency={primaryCurrency}
+          availableCurrencies={Object.keys(exchangeRateData)}
           onValueChange={handlePrimaryAmountChange}
           onCurrencySelect={handlePrimaryCurrencyChange}
-          style={styles.inputField}
+          style={styles.field}
         />
-        <CurrencyInputField
-          value={amountSecondary}
-          currencyType={currencySecondary}
-          availableCurrencies={Object.keys(exchangeRates)}
+        <CurrencyField
+          value={secondaryAmount}
+          currency={secondaryCurrency}
+          availableCurrencies={Object.keys(exchangeRateData)}
           onValueChange={handleSecondaryAmountChange}
           onCurrencySelect={handleSecondaryCurrencyChange}
-          style={styles.inputField}
+          style={styles.field}
         />
       </div>
     </div>
@@ -101,13 +100,13 @@ const styles = {
     maxWidth: "600px",
     margin: "0 auto",
   },
-  currencyInputs: {
+  currencyFields: {
     display: "flex",
     justifyContent: "space-between",
     width: "100%",
     gap: "20px",
   },
-  inputField: {
+  field: {
     flex: 1,
     padding: "10px",
     backgroundColor: "#333",

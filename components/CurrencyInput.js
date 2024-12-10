@@ -1,15 +1,15 @@
-const CurrencyInputField = ({ value, currencyType, availableCurrencies, onValueChange, onCurrencySelect }) => {
+const CurrencyField = ({ value, currency, availableCurrencies, onValueChange, onCurrencySelect }) => {
     return (
-        <div className="wrapper">
+        <div className="fieldWrapper">
             <input
                 type="number"
                 value={value}
                 onChange={(e) => onValueChange(e.target.value)}
             />
-            <select value={currencyType} onChange={(e) => onCurrencySelect(e.target.value)}>
-                {availableCurrencies.map((currency) => (
-                    <option key={currency} value={currency}>
-                        {currency}
+            <select value={currency} onChange={(e) => onCurrencySelect(e.target.value)}>
+                {availableCurrencies.map((currencyOption) => (
+                    <option key={currencyOption} value={currencyOption}>
+                        {currencyOption}
                     </option>
                 ))}
             </select>
@@ -17,4 +17,4 @@ const CurrencyInputField = ({ value, currencyType, availableCurrencies, onValueC
     );
 };
 
-export default CurrencyInputField;
+export default CurrencyField;
